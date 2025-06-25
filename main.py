@@ -2,7 +2,6 @@ import telebot
 from telebot import types
 import os
 
-
 API_TOKEN = '8005137384:AAEhT6g4lriKXeFo85Rnly3cP6firNx13pc'
 CHAT_ID = '-4870583716'
 
@@ -10,9 +9,14 @@ bot = telebot.TeleBot(API_TOKEN)
 user_data = {}
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.send_message(message.chat.id, "Привіт! 👋\nЗаповни коротку анкету для подачі заявки.")
-    bot.send_message(message.chat.id, "Як тебе звати?")
+def send_start(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add("📋 Заповнити анкету")
+    bot.send_message(message.chat.id, "Привіт! 👋\nНатисни кнопку нижче, щоб заповнити коротку анкету:", reply_markup=markup)
+
+@bot.message_handler(func=lambda message: message.text == "📋 Заповнити анкету")
+def start_application(message):
+    bot.send_message(message.chat.id, "Як тебе звати?", reply_markup=types.ReplyKeyboardRemove())
     user_data[message.chat.id] = {}
     bot.register_next_step_handler(message, get_name)
 
